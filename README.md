@@ -1,6 +1,8 @@
 # go-base58
 
-I extracted this package from https://github.com/conformal/btcutil to provide a simple base58 package that (a) defaults to base58-check (btc) and (b) allows using different alphabets.
+I extracted this package from https://github.com/conformal/btcutil to provide a simple base58 package that
+- defaults to base58-check (btc)
+- and allows using different alphabets.
 
 ## Usage
 
