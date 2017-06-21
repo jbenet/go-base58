@@ -8,13 +8,19 @@ The alphabet is modifyiable for
 
 Base58 Usage
 
-To decode a base58 string:
+ To decode a base58 string:
 
- rawData := base58.Base58Decode(encodedData)
+ rawData,err := base58.Decode("3VNr6P")
+ if err != nil {
+    fmt.Println(err.Error())
+	}
+ fmt.println(string(rawData))
+ >> abcd
 
-Similarly, to encode the same data:
+ Similarly, to encode the same data:
 
- encodedData := base58.Base58Encode(rawData)
-
+ encodedData := base58.Encode([]byte("abcd"))
+ fmt.println(encodedData)
+ >> 3VNr6P
 */
 package base58
