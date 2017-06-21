@@ -81,8 +81,8 @@ func EncodeAlphabet(b []byte, alphabet string) string {
 	}
 
 	// reverse
-	for i, j := start, len(answer)-1; i < j; i, j = i+1, j-1 {
-		answer[i], dst[j] = answer[j], dst[i]
+	for i, j := 0, len(answer)-1; i < j; i, j = i+1, j-1 {
+		answer[i], answer[j] = answer[j], answer[i]
 	}
 
 	return string(answer)
