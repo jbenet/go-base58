@@ -65,7 +65,7 @@ func EncodeAlphabet(b []byte, alphabet string) string {
 	x := new(big.Int)
 	x.SetBytes(b)
 
-	answer := make([]byte, 0, len(b)*136/100)
+	answer := make([]byte, 0, len(b)*137/100+1)
 	for x.Cmp(bigZero) > 0 {
 		mod := new(big.Int)
 		x.DivMod(x, bigRadix, mod)
@@ -81,9 +81,8 @@ func EncodeAlphabet(b []byte, alphabet string) string {
 	}
 
 	// reverse
-	alen := len(answer)
-	for i := 0; i < alen/2; i++ {
-		answer[i], answer[alen-1-i] = answer[alen-1-i], answer[i]
+	for i, j := start, len(answer)-1; i < j; i, j = i+1, j-1 {
+		answer[i], dst[j] = answer[j], dst[i]
 	}
 
 	return string(answer)
