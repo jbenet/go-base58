@@ -99,7 +99,7 @@ func BenchmarkDecodeShort(b *testing.B) {
 	const in = "1NS17iag9jJgTHD1VXjvLCEnZuQ3rJDE9L"
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_ = Decode(in)
+		_,_ = Decode(in)
 	}
 }
 
@@ -116,7 +116,7 @@ func BenchmarkDecodeOneKilo(b *testing.B) {
 	b.SetBytes(int64(len(in))) // 1024
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_ = Decode(in)
+		_,_ = Decode(in)
 	}
 }
 

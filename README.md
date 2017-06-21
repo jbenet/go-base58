@@ -21,7 +21,10 @@ func main() {
   str := b58.Encode(buf)
   fmt.Printf("encoded: %s\n", str)
 
-  buf2 := b58.Decode(str)
+  buf2,err := b58.Decode(str)
+  if(err != nil){
+    fmt.Println(err.Error())
+  }
   fmt.Printf("decoded: %v\n", buf2)
 }
 ```
@@ -48,7 +51,10 @@ func encdec(alphabet string) {
   str := b58.EncodeAlphabet(buf, alphabet)
   fmt.Printf("encoded: %s\n", str)
 
-  buf2 := b58.DecodeAlphabet(str, alphabet)
+  buf2,err := b58.DecodeAlphabet(str, alphabet)
+  if(err != nil){
+    fmt.Println(err.Error())
+  }
   fmt.Printf("decoded: %v\n\n", buf2)
 }
 

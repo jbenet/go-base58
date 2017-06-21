@@ -6,7 +6,9 @@
 package base58
 
 import (
+	"errors"
 	"math/big"
+	"strconv"
 	"strings"
 )
 
@@ -18,7 +20,7 @@ var bigRadix = big.NewInt(58)
 var bigZero = big.NewInt(0)
 
 // Decode decodes a modified base58 string to a byte slice, using BTCAlphabet
-func Decode(b string) []byte {
+func Decode(b string) ([]byte, error) {
 	return DecodeAlphabet(b, BTCAlphabet)
 }
 
@@ -28,36 +30,32 @@ func Encode(b []byte) string {
 }
 
 // DecodeAlphabet decodes a modified base58 string to a byte slice, using alphabet.
-func DecodeAlphabet(b, alphabet string) []byte {
-	answer := big.NewInt(0)
-	j := big.NewInt(1)
+func DecodeAlphabet(b, alphabet string) ([]byte, error) {
+	bigIntVal := big.NewInt(0)
+	radix := big.NewInt(58)
 
-	for i := len(b) - 1; i >= 0; i-- {
-		tmp := strings.IndexAny(alphabet, string(b[i]))
-		if tmp == -1 {
-			return []byte("")
+	for i := 0; i < len(b); i++ {
+		idx := strings.IndexAny(alphabet, string(b[i]))
+		if idx == -1 {
+			return nil, errors.New("illegal base58 data at input byte " + strconv.FormatInt(int64(i), 10))
 		}
-		idx := big.NewInt(int64(tmp))
-		tmp1 := big.NewInt(0)
-		tmp1.Mul(j, idx)
-
-		answer.Add(answer, tmp1)
-		j.Mul(j, bigRadix)
+		bigIntVal.Mul(bigIntVal, radix)
+		bigIntVal.Add(bigIntVal, big.NewInt(int64(idx)))
 	}
+	temp := bigIntVal.Bytes()
 
-	tmpval := answer.Bytes()
-
+	//append prefix 0
 	var numZeros int
 	for numZeros = 0; numZeros < len(b); numZeros++ {
 		if b[numZeros] != alphabet[0] {
 			break
 		}
 	}
-	flen := numZeros + len(tmpval)
-	val := make([]byte, flen, flen)
-	copy(val[numZeros:], tmpval)
+	answerLen := numZeros + len(temp)
+	answer := make([]byte, answerLen, answerLen)
 
-	return val
+	copy(answer[numZeros:], temp)
+	return answer, nil
 }
 
 // Encode encodes a byte slice to a modified base58 string, using alphabet
@@ -65,7 +63,7 @@ func EncodeAlphabet(b []byte, alphabet string) string {
 	x := new(big.Int)
 	x.SetBytes(b)
 
-	answer := make([]byte, 0, len(b)*136/100)
+	answer := make([]byte, 0, len(b)*137/100+1)
 	for x.Cmp(bigZero) > 0 {
 		mod := new(big.Int)
 		x.DivMod(x, bigRadix, mod)
@@ -81,9 +79,8 @@ func EncodeAlphabet(b []byte, alphabet string) string {
 	}
 
 	// reverse
-	alen := len(answer)
-	for i := 0; i < alen/2; i++ {
-		answer[i], answer[alen-1-i] = answer[alen-1-i], answer[i]
+	for i, j := 0, len(answer)-1; i < j; i, j = i+1, j-1 {
+		answer[i], answer[j] = answer[j], answer[i]
 	}
 
 	return string(answer)
